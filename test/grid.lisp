@@ -8,6 +8,13 @@
     (shg-insert shg ent)
     shg))
 
+(defun create-shg-and-remove (size loc dim)
+  (let ((shg (make-spatial-hash-grid size))
+	(ent (make-entity loc dim)))
+    (shg-insert shg ent)
+    (shg-remove shg ent)
+    shg))
+
 (defun hash-keys (hash-table)
   (loop for key being the hash-keys of hash-table collect key))
 
@@ -28,5 +35,36 @@
     (fiveam:is (= 9 (hash-table-count t3)))
     (fiveam:is (= 9 (hash-table-count t4)))
     (fiveam:is (= 4 (hash-table-count t5)))))
+
+(fiveam:test grid-remove
+  "Test the remove method of a spatial hash grid."
+  (let ((t0 (shg-cells (create-shg-and-remove 1 '(0 0) '(1 1)))))
+    (fiveam:is (= 0 (hash-table-count t0))))
+  (let* ((t1 (make-spatial-hash-grid 1))
+	 (e0 (make-entity '(4 3) '(2 2)))
+	 (e1 (make-entity '(2 1) '(1 1)))
+	 (e2 (make-entity '(44 22) '(4 4))))
+    (shg-insert t1 e0)
+    (shg-insert t1 e1)
+    (shg-insert t1 e2)
+    (shg-remove t1 e0)
+    (shg-remove t1 e1)
+    (shg-remove t1 e2)
+    (fiveam:is (= 0 (hash-table-count (shg-cells t1))))))
+
+(fiveam:test grid-find
+  "Test the find method of a spatial hash grid."
+  (let ((t0 (create-shg-and-insert 1 '(0 0) '(1 1))))
+    (fiveam:is (= 1 (length (shg-find t0 '(-1 -1) '(1.1 1.1))))))
+  (let* ((t1 (make-spatial-hash-grid 1))
+	 (e0 (make-entity '(1.5 1.5) '(0.1 0.1)))
+	 (e1 (make-entity '(1.9 1.9) '(0.2 0.2)))
+	 (e2 (make-entity '(2.2 1.2) '(0.15 0.15))))
+    (shg-insert t1 e0)
+    (shg-insert t1 e1)
+    (shg-insert t1 e2)
+    (fiveam:is (= 3 (length (shg-find t1 '(1 1) '(2 2)))))
+    (fiveam:is (= 1 (length (shg-find t1 '(1 2.1) '(2 2)))))
+    (fiveam:is (= 2 (length (shg-find t1 '(1 1) '(0.8 0.2)))))))
 
 (fiveam:run!)

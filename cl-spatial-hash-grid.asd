@@ -6,9 +6,11 @@
   :license  "MIT"
   :version "0.0.1"
   :serial t
+  :depends-on ("alexandria")
   :components ((:file "package")
 	       (:file "src/entity")
-	       (:file "src/grid"))
+	       (:file "src/grid")
+	       (:file "src/utility"))
   :in-order-to ((asdf:test-op (asdf:test-op "cl-spatial-hash-grid/tests"))))
 
 (asdf:defsystem "cl-spatial-hash-grid/tests"

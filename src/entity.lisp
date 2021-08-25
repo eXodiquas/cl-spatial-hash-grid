@@ -15,3 +15,7 @@
 
 (defun make-entity (loc dim)
   (make-instance 'entity :location loc :dimensions dim))
+
+(defmethod entity-bounds ((e entity))
+  "Calculates the indices of the buckets this entity spans with its position and dimensions."
+  (bounds (entity-location e) (entity-dimensions e)))
